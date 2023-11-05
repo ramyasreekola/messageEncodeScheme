@@ -1,0 +1,22 @@
+{
+  "name": "msg-encode-scheme",
+  "version": "1.0.0",
+  "description": "message encode decode scheme",
+  "main": "index.ts",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "ramya sree kola",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.8.10",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1"
+  }
+}
