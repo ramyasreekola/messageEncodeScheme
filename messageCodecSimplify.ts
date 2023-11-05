@@ -21,7 +21,7 @@ export class Message {
         }
     }
 }
-
+export 
 interface MessageCodec {
     encode(message: Message): Uint8Array;
     decode(data: Uint8Array): Message;

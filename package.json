@@ -4,7 +4,9 @@
   "description": "message encode decode scheme",
   "main": "index.ts",
   "scripts": {
-    "test": "jest"
+    "build": "tsc",
+    "test": "jest",
+    "start": "ts-node messageCodecSimplify.ts messageCodec.ts"
   },
   "author": "ramya sree kola",
   "license": "ISC",

@@ -1,6 +1,5 @@
-//import { Message, SimpleMessageCodec } from './messageCodecWithAPI';
-//import { Message, SimpleMessageCodec } from './messageCodec';
-import { Message, SimpleMessageCodec } from './messageCodecSimplify';
+import { Message, SimpleMessageCodec } from './messageCodec';
+
 describe('SimpleMessageCodec', () => {
   const codec = new SimpleMessageCodec();
 
@@ -11,12 +10,9 @@ describe('SimpleMessageCodec', () => {
       ['Header3', 'Value3'],
     ]);
     const payload = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  console.log(payload)
     const message = new Message(headers, payload);
     const encoded = codec.encode(message);
-    console.log(encoded)
     const decoded = codec.decode(encoded);
-    console.log(encoded)
     expect(decoded.headers.size).toBe(message.headers.size);
     decoded.headers.forEach((value, key) => {
       expect(message.headers.get(key)).toBe(value);
@@ -33,7 +29,7 @@ describe('SimpleMessageCodec', () => {
 
     expect(() => {
       new Message(headers, payload);
-    }).toThrowError('The number of headers cannot exceed 63');
+    }).toThrow('The number of headers cannot exceed 63');
   });
 
   it('should throw an error when encoding a message with a header name too long', () => {
@@ -44,7 +40,7 @@ describe('SimpleMessageCodec', () => {
 
     expect(() => {
       new Message(headers, payload);
-    }).toThrowError('Header names and values are limited to 1023 bytes');
+    }).toThrow('Header names and values are limited to 1023 bytes');
   });
 
   it('should throw an error when decoding a message with invalid header count', () => {
@@ -52,7 +48,7 @@ describe('SimpleMessageCodec', () => {
 
     expect(() => {
       codec.decode(invalidHeaderCount);
-    }).toThrowError('Header count exceeds the maximum of 63');
+    }).toThrow('Header count exceeds the maximum of 63');
   });
 
   it('should throw an error when decoding a message with incomplete data', () => {
@@ -60,7 +56,7 @@ describe('SimpleMessageCodec', () => {
 
     expect(() => {
       codec.decode(incompleteData);
-    }).toThrowError('Data is too short to contain a valid message');
+    }).toThrow('Data is too short to contain a valid message');
   });
 
 });
