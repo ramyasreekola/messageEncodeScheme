@@ -6,6 +6,7 @@ This TypeScript code contains two implementation attaining the same goal - encod
 
 - [Installation](#installation)
 - [API Documentation](#api-documentation)
+- Analysis (# Analysis)
 - [License](#license)
 
 ## Installation
@@ -47,23 +48,39 @@ While the APIs and theirs input/output types remain same for both `messageCodec.
 * If the header data doesn't follow the expected format (e.g., an odd number of elements after splitting by the unit separator), an error is thrown to indicate an invalid format.
 * The method returns a Message object with the parsed headers and payload.
 
-2.  In messageCodec.ts - The code uses predetemined lengths of header key values and adding fixed number of bytes showing the header - key and value lengths, so we know until what length a specific key takes up(this information is used when decoding back to ascii values) while parsing the message headers. Then attaches byte Array payload. This method can be preferred if using delimitors is not a choice and might add additional overhead(negligible) of computation and storing of the message headers and payload lengths.
+2.  In messageCodec.ts - This implementation uses the lengths of header key - values, so when converting to byte array - we know until what length a specific key takes up, what position its value starts and when the next header starts (this information is used when decoding the binary data back to ascii values) while parsing the message headers. Then attaches byte Array payload. This method can be preferred if using delimitors is not a choice and might add additional overhead(negligible) of computation and storing of the message headers and payload lengths.
  
-#### `encode(message: Message): Uint8Array`
+##### encode(message: Message): Uint8Array
+* It uses the header count, lengths of each key and value - create a buffer and feed these values along with ascii to binary encoded key and value.
+* For each header key value pair, it creates a new buffer, sets the key length in the first 2 bytes, followed by key buffer.After that, sets the value length, followed by value buffer.
+* Repeating this for all headers, then adds the binary message payload length followed by the payload itself
+     
 
-* It first calculates the size needed for the encoded message based on the number and size of headers and the payload.
-* It iterates over the headers to encode each key and value, creating binary representations. The encoding involves adding length information and ASCII conversion.
-* It constructs the final Uint8Array to hold the complete encoded message, including the header count, headers, and payload.
-* The method uses efficient techniques to manage the buffer and offset for copying data.
-
-####  `decode(data: Uint8Array): Message`
+##### decode(data: Uint8Array): Message
 * It first checks whether the data length is sufficient to contain a valid message (at least 5 bytes, including header count and payload length).
 * It then reads the header count and iterates over the number of headers to decode each key-value pair.
-* It decodes key and value lengths and the corresponding binary data, converting them back to strings.
+* It decodes key and value by reading the lengths and the corresponding binary data uptil that length, storing them back to strings.
 * It reads the payload size and extracts the payload data.
 * Finally, it creates a new Message instance with the extracted headers and payload data.
-#### Encoding ASCII Strings: 
-The class uses efficient methods (encodeAsciiString and decodeAsciiString) to convert between ASCII strings and binary representations. This ensures that headers and values are correctly encoded and decoded.
+
+##### Encoding ASCII Strings:
+The class uses helper methods (encodeAsciiString and decodeAsciiString) to convert between ASCII strings and binary representations.
+
+## Analysis
+
+#### Using Delimitors
+* Pros: It is a simple, space efficient solution. It is more flexible - It uses a delimiting character to separate headers and a record separator to indicate the end of a message, making it suitable for messages with varying content.
+* Self-delimiting: It is self-delimiting, meaning you can easily separate and process multiple messages in a stream. This is particularly useful for streaming protocols.
+* Cons: ASCII character restrictions-  It imposes restrictions on specific ASCII characters in headers, which might not be suitable for all use cases..
+* Potential performance impact: The use of delimiters and string manipulation may have a slight performance impact, especially when encoding and decoding large volumes of data.
+#### Using message length
+* Pros: It uses fixed-size headers and payload fields and can perform better for messages with a large number of headers, as it encodes headers and values using a fixed-length format.
+* No special character restrictions: It doesn't impose restrictions on specific ASCII characters in headers, making it suitable for a broader range of applications.
+* Cons: Since it uses fixed-size headers, it may not be suitable for messages with variable-length headers or dynamic key-value pairs.
+* Not self-delimiting: It doesn't include built-in message delimiters, making it challenging to handle multiple messages in a stream.
+
+Overall, I think using the delimitors is a practical solution for streaming protocols(where there isn't any restriction over using delimitors).
+
 ## License
 
 This module is open-source and available under the [MIT License](LICENSE).
