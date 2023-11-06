@@ -6,7 +6,7 @@ This TypeScript code contains two implementation attaining the same goal - encod
 
 - [Installation](#installation)
 - [API Documentation](#api-documentation)
-- Analysis (# Analysis)
+- [Analysis](#analysis)
 - [License](#license)
 
 ## Installation
@@ -50,13 +50,13 @@ While the APIs and theirs input/output types remain same for both `messageCodec.
 
 2.  In messageCodec.ts - This implementation uses the lengths of header key - values, so when converting to byte array - we know until what length a specific key takes up, what position its value starts and when the next header starts (this information is used when decoding the binary data back to ascii values) while parsing the message headers. Then attaches byte Array payload. This method can be preferred if using delimitors is not a choice and might add additional overhead(negligible) of computation and storing of the message headers and payload lengths.
  
-##### encode(message: Message): Uint8Array
+#### encode(message: Message): Uint8Array
 * It uses the header count, lengths of each key and value - create a buffer and feed these values along with ascii to binary encoded key and value.
 * For each header key value pair, it creates a new buffer, sets the key length in the first 2 bytes, followed by key buffer.After that, sets the value length, followed by value buffer.
 * Repeating this for all headers, then adds the binary message payload length followed by the payload itself
      
 
-##### decode(data: Uint8Array): Message
+#### decode(data: Uint8Array): Message
 * It first checks whether the data length is sufficient to contain a valid message (at least 5 bytes, including header count and payload length).
 * It then reads the header count and iterates over the number of headers to decode each key-value pair.
 * It decodes key and value by reading the lengths and the corresponding binary data uptil that length, storing them back to strings.
